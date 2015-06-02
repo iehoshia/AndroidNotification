@@ -16,6 +16,18 @@ import android.view.View;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.apache.http.client.HttpClient;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
 
 public class MainActivity extends Activity {
 
@@ -31,7 +43,6 @@ public class MainActivity extends Activity {
             estaConectado.setText("Esta Conectado");
         else
             estaConectado.setText("No Esta Conectado");
-
     }
 
     public void mostrarNotificacion(View view){
@@ -53,7 +64,55 @@ public class MainActivity extends Activity {
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
-    // github.com
+    public InputStream GET(String url){
+        InputStream inputStream = null;
+        String resultado = "";
+        String urlString = null;
+        try{
+            URL urlid = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) urlid.openConnection();
+            conn.setConnectTimeout(1000);
+            conn.setReadTimeout(1500);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream stream = conn.getInputStream();
+            return stream;
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return inputStream;
+    }
+
+    private String leerEsto (InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        Reader reader = null;
+        reader = new InputStreamReader(stream, "UTF-8");
+        char[] buffer = new char[len];
+        reader.read(buffer);
+        return new String (buffer);
+
+    }
+
+    private String cargarDesdeGET(String urlString) throws IOException{
+        InputStream stream = null;
+        String str = "";
+        try{
+            stream = GET(urlString);
+            str = leerEsto(stream,500);
+        }
+        finally {
+            if(stream != null){
+                stream.close();
+            }
+        }
+        return str;
+    }
 
     public boolean estaConectado(){
         ConnectivityManager connManager = (ConnectivityManager)getSystemService(Activity.CONNECTIVITY_SERVICE);

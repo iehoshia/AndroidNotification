@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
@@ -24,6 +25,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TextView estaConectado = (TextView) findViewById(R.id.textView);
+        if (estaConectado())
+            estaConectado.setText("Esta Conectado");
+        else
+            estaConectado.setText("No Esta Conectado");
+
     }
 
     public void mostrarNotificacion(View view){
